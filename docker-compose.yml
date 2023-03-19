@@ -1,0 +1,51 @@
+version: "3"
+services:
+
+  server:
+    build: 
+      context: ./server
+    ports:
+      - "80:80"
+    #  - "8000:8000"
+      - "443:443"
+    depends_on:
+      - proxy
+      - front
+      #- api
+    networks:
+      - backend
+      - frontend
+
+  front:
+    build: 
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - frontend
+
+  api:
+    build:
+      context: ./api
+    networks:
+      - backend
+    depends_on:
+      - front
+      
+
+  proxy:
+    build:
+      context: ./proxy
+    ports:
+      - "5000:5000"
+    depends_on:
+      - api
+    networks:
+      - frontend
+      - backend
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
